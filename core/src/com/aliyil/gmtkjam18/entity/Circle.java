@@ -19,10 +19,15 @@ public class Circle extends SpriteEntity {
         animationTime += dts();
         if(animationTime > animationTimeLimit) animationTime-=animationTimeLimit*2;
 
-        if(additionalScale > 0) additionalScale *= 0.9f;
+        if(additionalScale > 0.01f) additionalScale *= 0.9f;
         else additionalScale = 0;
 
-        getSprite().setScale(baseScale + additionalScale + (float)Math.sin(animationTime*3)/12f);
+        float calculated = additionalScale + (float)Math.sin(animationTime*3)/12f;
+
+        getSprite().setScale(baseScale + calculated);
+
+        float alpha = calculated*2 > 0.7f ? 0.7f : calculated*2;
+        setAlpha(0.3f + alpha);
         super.tick();
     }
 

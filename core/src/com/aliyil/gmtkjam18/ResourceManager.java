@@ -10,6 +10,9 @@ public final class ResourceManager {
     public BitmapFont bitmapFont;
 
     public Texture circle;
+    public Texture glowShape1;
+    public Texture glowShape2;
+    public Texture glowShape3;
 
     public Sound note1;
     public Sound note2;
@@ -33,6 +36,9 @@ public final class ResourceManager {
         assetManager.load("fonts/font.fnt", BitmapFont.class);
 
         assetManager.load("textures/circle.png", Texture.class);
+        assetManager.load("textures/glowshapes/glowshape1.png", Texture.class);
+        assetManager.load("textures/glowshapes/glowshape2.png", Texture.class);
+        assetManager.load("textures/glowshapes/glowshape3.png", Texture.class);
 
         assetManager.load("sounds/1.wav", Sound.class);
         assetManager.load("sounds/2.wav", Sound.class);
@@ -53,7 +59,13 @@ public final class ResourceManager {
         bitmapFont.getRegion().getTexture().setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
 
         circle = assetManager.get("textures/circle.png", Texture.class);
+        glowShape1 = assetManager.get("textures/glowshapes/glowshape1.png", Texture.class);
+        glowShape2 = assetManager.get("textures/glowshapes/glowshape2.png", Texture.class);
+        glowShape3 = assetManager.get("textures/glowshapes/glowshape3.png", Texture.class);
         circle.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        glowShape1.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        glowShape2.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        glowShape3.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
         note1 = assetManager.get("sounds/1.wav", Sound.class);
         note2 = assetManager.get("sounds/2.wav", Sound.class);

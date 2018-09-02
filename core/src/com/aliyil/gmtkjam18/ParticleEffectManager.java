@@ -13,6 +13,9 @@ public class ParticleEffectManager {
     private Array<PooledEntityEffect> effects;
     private Game gameInstance;
 
+    private ParticleEffectPool growingCirclePool;
+    private ParticleEffectPool circleExplosionPool;
+
     public ParticleEffectManager(Game gameInstance) {
         this.gameInstance = gameInstance;
     }
@@ -38,11 +41,17 @@ public class ParticleEffectManager {
     public void loadResources() {
         effects = new Array<PooledEntityEffect>();
 
-//        ParticleEffect pBigExplosion = new ParticleEffect();
-//        pBigExplosion.load(Gdx.files.internal("particles/big_explosion.p"), Gdx.files.internal("textures"));
-//        pBigExplosion.start();
-//        pBigExplosion.scaleEffect(1f);
-//        ppBigExplosion = new ParticleEffectPool(pBigExplosion, 20, 100);
+        ParticleEffect growingCircle = new ParticleEffect();
+        growingCircle.load(Gdx.files.internal("particles/growingcircle.p"), Gdx.files.internal("textures"));
+        growingCircle.start();
+        growingCircle.scaleEffect(1f);
+        growingCirclePool = new ParticleEffectPool(growingCircle, 10, 100);
+
+        ParticleEffect circleExplosion = new ParticleEffect();
+        circleExplosion.load(Gdx.files.internal("particles/circleexplosion.p"), Gdx.files.internal("textures"));
+        circleExplosion.start();
+        circleExplosion.scaleEffect(1f);
+        circleExplosionPool = new ParticleEffectPool(circleExplosion, 10, 100);
     }
 
     public void releaseResources() {
@@ -60,10 +69,18 @@ public class ParticleEffectManager {
 
     //Should call setCountinuous(true) for all continuous particles
 
-//    public void newBigExplosion(float x, float y) {
-//        ParticleEffectPool.PooledEffect explosion = ppBigExplosion.obtain();
-//        explosion.setPosition(x, y);
-//        PooledEntityEffect effect = new PooledEntityEffect(explosion);
-//        effects.add(effect);
-//    }
+    public void newGrowingCircle(float x, float y, float alpha) {
+        ParticleEffectPool.PooledEffect pooledEffect = growingCirclePool.obtain();
+        pooledEffect.setPosition(x, y);
+        pooledEffect.getEmitters().first().getTransparency().setHigh(alpha);
+        PooledEntityEffect entityEffect = new PooledEntityEffect(pooledEffect);
+        effects.add(entityEffect);
+    }
+
+    public void newCircleExplosion(float x, float y) {
+        ParticleEffectPool.PooledEffect pooledEffect = circleExplosionPool.obtain();
+        pooledEffect.setPosition(x, y);
+        PooledEntityEffect entityEffect = new PooledEntityEffect(pooledEffect);
+        effects.add(entityEffect);
+    }
 }

@@ -1,12 +1,19 @@
 package com.aliyil.gmtkjam18.screen;
 
 import com.aliyil.gmtkjam18.Game;
+import com.aliyil.gmtkjam18.Note;
 import com.aliyil.gmtkjam18.entity.Circle;
+import com.aliyil.gmtkjam18.entity.NoteSpawner;
 import com.aliyil.gmtkjam18.entity.Screen;
+import com.aliyil.gmtkjam18.entity.interfaces.NoteBase;
+import com.aliyil.gmtkjam18.entity.Entity;
 import com.badlogic.gdx.Input;
+
+import java.util.ArrayList;
 
 public class InGame extends Screen {
     public Circle circle;
+    private NoteSpawner spawner;
 
     public InGame(Game game) {
         super(game);
@@ -20,6 +27,9 @@ public class InGame extends Screen {
         circle = new Circle(getGameInstance());
         circle.setPosition(Game.w/2f, Game.h/2f);
         circle.start();
+
+        spawner = new NoteSpawner(getGameInstance());
+        spawner.start();
         super.start();
     }
 
@@ -61,6 +71,10 @@ public class InGame extends Screen {
     }
 
     public void pressed(Note note){
+        NoteBase closest = getClosest(note);
+        if(closest != null){
+            float amount = closest.hit();
+        }
         switch (note){
             case NOTE1:
                 getGameInstance().getSoundManager().note1();
@@ -85,18 +99,39 @@ public class InGame extends Screen {
         }
     }
 
+    private NoteBase getClosest(Note note){
+        ArrayList<NoteBase> notes = new ArrayList<NoteBase>();
+        for(Entity entity : getGameInstance().getEntities()){
+            if(entity instanceof NoteBase){
+                NoteBase noteEntity = (NoteBase)entity;
+                if(noteEntity.getNote() == note){
+                    notes.add(noteEntity);
+                }
+            }
+        }
+
+        NoteBase currentClosest = null;
+
+        for(NoteBase noteEntity : notes){
+            float normalizedLife = noteEntity.getNormalizedLife();
+            float absoluteLife = normalizedLife >= 0 ? normalizedLife : -normalizedLife;
+            float currentClosestAbsoluteLife = Float.MAX_VALUE;
+            if(currentClosest != null){
+                float currentClosestNormalizedLife = currentClosest.getNormalizedLife();
+                currentClosestAbsoluteLife = currentClosestNormalizedLife >= 0 ? currentClosestNormalizedLife : -currentClosestNormalizedLife;
+            }
+
+            if(currentClosestAbsoluteLife > absoluteLife) currentClosest = noteEntity;
+        }
+
+        return currentClosest;
+    }
+
     @Override
     public void stop() {
         super.stop();
         getGameInstance().getSoundManager().stopBackground();
         circle.kill();
-    }
-
-    enum Note{
-        NOTE1,
-        NOTE2,
-        NOTE3,
-        NOTE4,
-        NOTEBIG
+        spawner.kill();
     }
 }
