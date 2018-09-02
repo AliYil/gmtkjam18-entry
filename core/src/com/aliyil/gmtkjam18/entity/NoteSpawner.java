@@ -3,6 +3,7 @@ package com.aliyil.gmtkjam18.entity;
 import com.aliyil.gmtkjam18.Game;
 import com.aliyil.gmtkjam18.Note;
 import com.aliyil.gmtkjam18.Utilities;
+import com.aliyil.gmtkjam18.entity.interfaces.NoteBase;
 import com.badlogic.gdx.graphics.Texture;
 
 import java.util.LinkedList;
@@ -12,6 +13,7 @@ public class NoteSpawner extends Entity {
     private float beatTimer;
     private int beatCounter;
     private float speed;
+    public float noteLife;
     private LinkedList<Note> notes;
     private Health health;
 
@@ -26,38 +28,110 @@ public class NoteSpawner extends Entity {
         super.start();
         timer = 0;
         beatTimer = 0;
+        noteLife = 1f;
     }
 
     @Override
     public void tick() {
         super.tick();
+
+        boolean spawnNote1 = false;
+        boolean spawnNote2 = false;
+        boolean spawnNote3 = false;
+        boolean spawnNote4 = false;
+        boolean spawnNoteBig = false;
+
         timer += dts();
+        if(timer < 15) speed = 1;
+        else speed = 1.5f;
         beatTimer += dts() * speed;
+        noteLife = 2 - (timer / 200f);
+        if(noteLife < 0.5f) noteLife = 0.5f;
+//        noteLife = 0.5f;
 
         if(beatTimer > 1){
             beatTimer--;
+            if(timer > 25 && Utilities.RANDOM.nextFloat() < 0.5f) beatTimer += 0.5f;
             beatCounter++;
 
-            switch (beatCounter % 5){
-                case 0:
-                    spawn(Note.NOTE1);
-                    break;
-                case 1:
-                    spawn(Note.NOTE2);
-                    break;
-                case 2:
-                    spawn(Note.NOTE3);
-                    break;
-                case 3:
-                    spawn(Note.NOTE4);
-                    break;
-                case 4:
-                    spawn(Note.NOTEBIG);
-                    break;
-                case 5:
-                    break;
+            if(Utilities.RANDOM.nextFloat() <= 0.05f){
+                spawnNoteBig = true;
+            }else{
+                switch (Utilities.RANDOM.nextInt(4)){
+                    case 0:
+                        spawnNote1 = true;
+                        break;
+                    case 1:
+                        spawnNote2 = true;
+                        break;
+                    case 2:
+                        spawnNote3 = true;
+                        break;
+                    case 3:
+                        spawnNote4 = true;
+                        break;
+                }
+            }
+
+
+
+            if(timer > 45){
+                switch (Utilities.RANDOM.nextInt(15)){
+                    case 0:
+                        spawnNote1 = true;
+                        break;
+                    case 1:
+                        spawnNote2 = true;
+                        break;
+                    case 2:
+                        spawnNote3 = true;
+                        break;
+                    case 3:
+                        spawnNote4 = true;
+                        break;
+                }
+
+                if(timer > 90){
+                    switch (Utilities.RANDOM.nextInt(20)){
+                        case 0:
+                            spawnNote1 = true;
+                            break;
+                        case 1:
+                            spawnNote2 = true;
+                            break;
+                        case 2:
+                            spawnNote3 = true;
+                            break;
+                        case 3:
+                            spawnNote4 = true;
+                            break;
+                    }
+
+                    if(timer > 60){
+                        switch (Utilities.RANDOM.nextInt(20)){
+                            case 0:
+                                spawnNote1 = true;
+                                break;
+                            case 1:
+                                spawnNote2 = true;
+                                break;
+                            case 2:
+                                spawnNote3 = true;
+                                break;
+                            case 3:
+                                spawnNote4 = true;
+                                break;
+                        }
+                    }
+                }
             }
         }
+
+        if(spawnNote1) spawn(Note.NOTE1);
+        if(spawnNote2) spawn(Note.NOTE2);
+        if(spawnNote3) spawn(Note.NOTE3);
+        if(spawnNote4) spawn(Note.NOTE4);
+        if(spawnNoteBig) spawn(Note.NOTEBIG);
     }
 
     @Override
@@ -65,7 +139,7 @@ public class NoteSpawner extends Entity {
         super.stop();
     }
 
-    private void spawn(Note note){
+    public NoteHit spawn(Note note){
         NoteHit noteEntity = null;
         switch (note){
             case NONE:
@@ -77,10 +151,11 @@ public class NoteSpawner extends Entity {
                 noteEntity = createSmallNote(note);
                 break;
             case NOTEBIG:
-                noteEntity = new NoteHit(getGameInstance(), getGameInstance().getResourceManager().circle, note, 1f, health);
+                noteEntity = new NoteHit(getGameInstance(), getGameInstance().getResourceManager().circle, note, noteLife, health);
                 break;
         }
         noteEntity.start();
+        return noteEntity;
     }
 
     private NoteHit createSmallNote(Note note){
@@ -96,6 +171,6 @@ public class NoteSpawner extends Entity {
                 noteTexture = getGameInstance().getResourceManager().glowShape3;
                 break;
         }
-        return new NoteHit(getGameInstance(), noteTexture, note, 1f, health);
+        return new NoteHit(getGameInstance(), noteTexture, note, noteLife, health);
     }
 }

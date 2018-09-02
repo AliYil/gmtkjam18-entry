@@ -27,7 +27,7 @@ public class Game extends ApplicationAdapter {
     public static final int w = 640;
     //Height units
     public static final int h = 480;
-    public static final boolean devMode = true;
+    public static final boolean devMode = false;
     public SharedValues sharedValues;
 
     private OrthographicCamera camera;

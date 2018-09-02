@@ -4,6 +4,7 @@ import com.aliyil.gmtkjam18.Game;
 import com.aliyil.gmtkjam18.Note;
 import com.aliyil.gmtkjam18.Utilities;
 import com.aliyil.gmtkjam18.entity.interfaces.NoteBase;
+import com.aliyil.gmtkjam18.screen.InGame;
 import com.badlogic.gdx.graphics.Texture;
 
 public class NoteHit extends SpriteEntity implements NoteBase {
@@ -61,13 +62,13 @@ public class NoteHit extends SpriteEntity implements NoteBase {
                 setX(centerX);
                 setY(centerY);
                 if(normalizedLife > 0){
-                    getSprite().setScale(normalizedLife * 20f);
+                    getSprite().setScale(0.3f + normalizedLife * 20f);
                     setAlpha(1 - normalizedLife);
                 }
                 break;
         }
 
-        getSprite().setRotation(getSprite().getRotation() + centeredRandom*10f);
+        getSprite().setRotation(getSprite().getRotation() + centeredRandom * 200f * dts());
 
         if(life <= -0.2f) hit();
     }
@@ -87,20 +88,21 @@ public class NoteHit extends SpriteEntity implements NoteBase {
         kill();
         getGameInstance().getParticleEffectManager().newCircleExplosion(getX(), getY());
 
-
         float normalizedLife = getNormalizedLife();
         float absoulteNormalizedLife = normalizedLife >= 0 ? normalizedLife : -normalizedLife;
 
-
-        if(absoulteNormalizedLife < 0.1f){
-            getSharedValues().score++;
-            if(getNote() == Note.NOTEBIG){
-                health.health += 0.05f;
+        if(health != null){
+            if(absoulteNormalizedLife < InGame.hitTolerance){
+                getSharedValues().score++;
+                if(getNote() == Note.NOTEBIG){
+                    health.health += 0.1f;
+                }
+            }
+            else{
+                health.health -= 0.1f;
             }
         }
-        else{
-            health.health -= 0.1f;
-        }
+
 
         return absoulteNormalizedLife;
     }

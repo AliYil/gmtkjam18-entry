@@ -33,7 +33,7 @@ public class Main extends Screen {
 
         if (getSharedValues().score <= 0) {
             text1.setScale(0.5f);
-            text1.setText("GMTKJAM18");
+            text1.setText("PERMANOTES");
             text2.setText("Press Space");
         } else {
             text1.setScale(0.5f);
@@ -51,7 +51,11 @@ public class Main extends Screen {
     public boolean keyDown(int keycode) {
         switch (keycode){
             case Input.Keys.SPACE:
-                new InGame(getGameInstance()).start();
+                if (getSharedValues().score <= 0){
+                    new Tutorial(getGameInstance()).start();
+                }else{
+                    new InGame(getGameInstance()).start();
+                }
                 break;
         }
         return super.keyDown(keycode);

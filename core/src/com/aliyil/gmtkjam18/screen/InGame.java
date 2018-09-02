@@ -19,6 +19,8 @@ public class InGame extends Screen {
     private Health health;
     private Text scoreText;
 
+    public static final float hitTolerance = 0.07f;
+
     public InGame(Game game) {
         super(game);
         enableInputListener(0);
@@ -27,7 +29,7 @@ public class InGame extends Screen {
     @Override
     public void start() {
         getGameInstance().getSharedValues().score = 0;
-        getGameInstance().getSoundManager().noteBig();
+        getGameInstance().getSoundManager().noteBig(1);
         getGameInstance().getSoundManager().startBackground();
         circle = new Circle(getGameInstance());
         circle.setPosition(Game.w/2f, Game.h/2f);
@@ -98,35 +100,41 @@ public class InGame extends Screen {
 
     public void pressed(Note note){
         NoteBase closest = getClosest(note);
+        float pitch = 1f;
         if(closest != null){
             float amount = closest.hit();
 
-            float normalizedAbsoulteLife = amount*4f;
-            float baseAlpha = closest.getNote() != Note.NOTEBIG ? 0.3f : 1f;
-            float alpha = baseAlpha - normalizedAbsoulteLife;
-            if(alpha > 1) alpha = 1;
-            if(alpha < 0) alpha = 0;
-            getGameInstance().getParticleEffectManager().newGrowingCircle(closest.getX(), closest.getY(), alpha);
+            if(amount < hitTolerance){
+                float normalizedAbsoulteLife = amount*4f;
+                float baseAlpha = closest.getNote() != Note.NOTEBIG ? 0.3f : 1f;
+                float alpha = baseAlpha - normalizedAbsoulteLife;
+                if(alpha > 1) alpha = 1;
+                if(alpha < 0) alpha = 0;
+                getGameInstance().getParticleEffectManager().newGrowingCircle(closest.getX(), closest.getY(), alpha);
+            }else{
+                pitch += closest.getNormalizedLife()/2f;
+            }
+
         }
         switch (note){
             case NOTE1:
-                getGameInstance().getSoundManager().note1();
+                getGameInstance().getSoundManager().note1(pitch);
                 circle.growEffect(0.2f);
                 break;
             case NOTE2:
-                getGameInstance().getSoundManager().note2();
+                getGameInstance().getSoundManager().note2(pitch);
                 circle.growEffect(0.2f);
                 break;
             case NOTE3:
-                getGameInstance().getSoundManager().note3();
+                getGameInstance().getSoundManager().note3(pitch);
                 circle.growEffect(0.2f);
                 break;
             case NOTE4:
-                getGameInstance().getSoundManager().note4();
+                getGameInstance().getSoundManager().note4(pitch);
                 circle.growEffect(0.2f);
                 break;
             case NOTEBIG:
-                getGameInstance().getSoundManager().noteBig();
+                getGameInstance().getSoundManager().noteBig(pitch);
                 circle.growEffect(0.6f);
                 break;
         }
