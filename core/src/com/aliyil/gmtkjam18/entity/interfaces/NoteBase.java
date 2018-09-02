@@ -7,4 +7,7 @@ public interface NoteBase {
     float getNormalizedLife();
     float hit();
     Note getNote();
+
+    float getX();
+    float getY();
 }

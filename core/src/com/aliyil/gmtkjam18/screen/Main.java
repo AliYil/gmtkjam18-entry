@@ -26,17 +26,17 @@ public class Main extends Screen {
 
         text2 = new Text(getGameInstance(), "");
         text2.setPosition(Game.w * 0.5f, Game.h * 0.7f);
-        text2.setScale(1f);
+        text2.setScale(0.5f);
         text2.setCentered(true);
         text2.setColor(new Color(Color.WHITE));
         text2.start();
 
         if (getSharedValues().score <= 0) {
-            text1.setScale(1f);
+            text1.setScale(0.5f);
             text1.setText("GMTKJAM18");
             text2.setText("Press Space");
         } else {
-            text1.setScale(1f);
+            text1.setScale(0.5f);
             text1.setText("TRY AGAIN");
             text2.setText("YOUR SCORE: " + getSharedValues().score);
         }

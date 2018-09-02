@@ -13,9 +13,11 @@ public class NoteSpawner extends Entity {
     private int beatCounter;
     private float speed;
     private LinkedList<Note> notes;
+    private Health health;
 
-    public NoteSpawner(Game game) {
+    public NoteSpawner(Game game, Health health) {
         super(game);
+        this.health = health;
         speed = 1;
     }
 
@@ -35,7 +37,26 @@ public class NoteSpawner extends Entity {
         if(beatTimer > 1){
             beatTimer--;
             beatCounter++;
-            spawn(Note.NOTE4);
+
+            switch (beatCounter % 5){
+                case 0:
+                    spawn(Note.NOTE1);
+                    break;
+                case 1:
+                    spawn(Note.NOTE2);
+                    break;
+                case 2:
+                    spawn(Note.NOTE3);
+                    break;
+                case 3:
+                    spawn(Note.NOTE4);
+                    break;
+                case 4:
+                    spawn(Note.NOTEBIG);
+                    break;
+                case 5:
+                    break;
+            }
         }
     }
 
@@ -45,6 +66,7 @@ public class NoteSpawner extends Entity {
     }
 
     private void spawn(Note note){
+        NoteHit noteEntity = null;
         switch (note){
             case NONE:
                 break;
@@ -52,15 +74,16 @@ public class NoteSpawner extends Entity {
             case NOTE2:
             case NOTE3:
             case NOTE4:
-                SmallNote noteEntity = createSmallNote(note);
-                noteEntity.start();
+                noteEntity = createSmallNote(note);
                 break;
             case NOTEBIG:
+                noteEntity = new NoteHit(getGameInstance(), getGameInstance().getResourceManager().circle, note, 1f, health);
                 break;
         }
+        noteEntity.start();
     }
 
-    private SmallNote createSmallNote(Note note){
+    private NoteHit createSmallNote(Note note){
         Texture noteTexture;
         switch (Utilities.RANDOM.nextInt(3)){
             case 0:
@@ -73,6 +96,6 @@ public class NoteSpawner extends Entity {
                 noteTexture = getGameInstance().getResourceManager().glowShape3;
                 break;
         }
-        return new SmallNote(getGameInstance(), noteTexture, note, 1f);
+        return new NoteHit(getGameInstance(), noteTexture, note, 1f, health);
     }
 }
